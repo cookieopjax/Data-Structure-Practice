@@ -8,7 +8,7 @@
 //0不放東西，起於0，只要有一個元素，rear = 1
 //因為是循環的，要用%，例如0~8佇列，(8+1)%9=0 他會自己回到該有的位置
 //當rear = front 佇列為空
-//(Rear+1)%MAX=Front 佇列已滿 (因為有一格不放要+1)
+//(Rear+1) % MAX = Front 佇列已滿 (因為有一格不放要+1)
 
 int* create();
 void push(int* Quene, int* Front, int* Rear, int num);
