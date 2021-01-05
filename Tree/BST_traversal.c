@@ -5,7 +5,7 @@
 #pragma warning(disable : 4996) //visual studio認為scanf不安全，故用此移除警告
 // preorder : visit -> left -> right
 // inorder : left -> visit -> right
-
+// postorder : left -> right -> visit
 typedef struct TreeNode {
     int val;
     struct TreeNode* left;
@@ -13,12 +13,12 @@ typedef struct TreeNode {
 }treeNode;
 
 //遞迴
-void recur_preorder_traversal(treeNode* root); 
-void recur_inorder_traversal(treeNode* root); 
+void recur_preorder_traversal(treeNode* root);
+void recur_inorder_traversal(treeNode* root);
 void recur_postorder_traversal(treeNode* root);
 
 //疊代
-void iter_preorder_traversal(treeNode* root); 
+void iter_preorder_traversal(treeNode* root);
 void iter_inorder_traversal(treeNode* root);
 void iter_postorder_traversal(treeNode* root); //目前還沒寫好
 
@@ -43,16 +43,16 @@ int main() {
     printf("遞迴前序追蹤 : ");
     recur_preorder_traversal(root);
     printf("\n");
-	  printf("疊代前序追蹤 : ");
-	  iter_preorder_traversal(root);
-	  printf("\n");
+    printf("疊代前序追蹤 : ");
+    iter_preorder_traversal(root);
+    printf("\n\n");
 
     printf("遞迴中序追蹤 : ");
     recur_inorder_traversal(root);
-	  printf("\n");
-	  printf("疊代中序追蹤 : ");
-	  iter_inorder_traversal(root);
     printf("\n");
+    printf("疊代中序追蹤 : ");
+    iter_inorder_traversal(root);
+    printf("\n\n");
 
     printf("遞迴後序追蹤 : ");
     recur_postorder_traversal(root);
@@ -80,8 +80,8 @@ void recur_inorder_traversal(treeNode* root) {
 
 void recur_postorder_traversal(treeNode* root) {
     if (root) {
-        recur_inorder_traversal(root->left);
-        recur_inorder_traversal(root->right);
+        recur_postorder_traversal(root->left);
+        recur_postorder_traversal(root->right);
         printf("%d ", root->val);
     }
 }
@@ -169,24 +169,29 @@ void iter_inorder_traversal(treeNode* root) {
 }
 
 void iter_postorder_traversal(treeNode* root) {
-    treeNode* stack1[STACKMAX];
-    treeNode* stack2[STACKMAX];
-    int top1 = -1, top2 = -1;
-    int* top1Ptr = &top1;
-    int* top2Ptr = &top2;
+    //後序需倒過來輸出，故先用陣列存而非直接印出
+    int tempArr[STACKMAX] = { 0 };
+    int counter = 0;
+    treeNode* stack[STACKMAX];
+    int top = -1;
+    push(stack, &top, root);
+    while (!isEmpty(top)) {
 
-    push(stack1, top1, root);
-    while (!isEmpty(top1)) {
-        treeNode* current = pop(stack1, top1Ptr);
-        push(stack2, top2Ptr, current);
-
+        treeNode* current = pop(stack, &top);
         if (current->left) {
-            push(stack1, top1Ptr, current->left);
+            push(stack, &top, current->left);
         }
         if (current->right) {
-            push(stack1, top1Ptr, current->right);
+            push(stack, &top, current->right);
         }
+        tempArr[counter] = current->val;
+        counter++;
     }
+
+    for (int i = counter - 1; i >= 0; i--) {
+        printf("%d ", tempArr[i]);
+    }
+    
 }
 
 void push(treeNode** stack, int* top, treeNode* newTreeNode) {
